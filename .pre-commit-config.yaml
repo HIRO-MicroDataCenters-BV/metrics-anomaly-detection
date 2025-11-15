@@ -1,0 +1,64 @@
+default_language_version:
+  python: python3.12
+
+default_stages: [commit, push]
+
+repos:
+- repo: https://github.com/norwoodj/helm-docs
+  rev:  "v1.14.2"
+  hooks:
+    - id: helm-docs
+      args:
+        # Make the tool search for charts only under the `charts` directory
+        - --chart-search-root=./charts
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: trailing-whitespace
+    exclude: .*\.md|README.md
+  - id: end-of-file-fixer
+  - id: check-yaml
+    exclude: ./charts
+  - id: check-added-large-files
+
+- repo: https://github.com/koalaman/shellcheck-precommit
+  rev: v0.11.0
+  hooks:
+  - id: shellcheck
+
+- repo: local
+  hooks:
+    - id: mypy
+      name: mypy
+      files: ^src/
+      entry: uv run mypy
+      language: system
+      types: [python]
+
+- repo: local
+  hooks:
+    - id: isort
+      name: isort
+      files: ^src/
+      entry: uv run isort
+      language: system
+      types: [python]
+
+- repo: local
+  hooks:
+    - id: flake8
+      name: flake8
+      files: ^src/
+      entry: uv run flake8 --config ./.flake8
+      language: system
+      types: [python]
+
+- repo: local
+  hooks:
+    - id: black
+      name: black
+      files: ^src/
+      entry: uv run black
+      language: system
+      types: [python]

@@ -1,0 +1,29 @@
+{{- if .Values.persistence.model.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "app.fullname" . }}-model
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.model.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.model.size }}
+---
+{{- end }}
+{{- if .Values.persistence.dataset.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "app.fullname" . }}-dataset
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.dataset.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.dataset.size }}
+{{- end }}

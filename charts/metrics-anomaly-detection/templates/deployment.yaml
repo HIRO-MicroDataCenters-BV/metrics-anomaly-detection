@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "app.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: anomaly-injector
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: [
+            "-m",
+            "metrics_anomaly_detection.data_injector",
+            "--csv",
+            "/app/src_data/final_dataset.csv",
+            "--data-path",
+            "/app/data/",
+          ]
+          ports: []
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: model-volume
+              mountPath: /app/models
+            - name: dataset-volume
+              mountPath: /app/data
+            - name: tmp-volume
+              mountPath: /tmp
+        - name: anomaly-detector
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: [
+            "-m",
+            "metrics_anomaly_detection.ML",
+            "--csv-path",
+            "/app/data",
+            "--model-path",
+            /app/models,
+          ]
+          ports: []
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: model-volume
+              mountPath: /app/models
+            - name: dataset-volume
+              mountPath: /app/data
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: model-volume
+          {{- if .Values.persistence.model.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}-model
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: dataset-volume
+          {{- if .Values.persistence.dataset.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "app.fullname" . }}-dataset
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.temporaryStorage.sizeLimit }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

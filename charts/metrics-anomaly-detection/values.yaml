@@ -1,0 +1,50 @@
+replicaCount: 1
+
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources:
+  requests:
+    cpu: 1
+    memory: 500Mi
+  limits:
+    cpu: 1
+    memory: 500Mi
+
+ingressHostName: metrics-anomaly-detection
+
+livenessProbe:
+
+readinessProbe:
+
+persistence:
+  model:
+    enabled: true
+    size: 2Gi
+    accessMode: ReadWriteOnce
+  dataset:
+    enabled: true
+    size: 1Gi
+    accessMode: ReadWriteOnce
+
+temporaryStorage:
+  sizeLimit: 512Mi

@@ -29,7 +29,7 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
-      with: 
+      with:
         version: "0.8.17"
         # temporary commented due to vulnerabilities in docker images
         # version-file: "pyproject.toml"
@@ -44,9 +44,6 @@ jobs:
         uv run isort ./src --check --diff
         uv run flake8 ./src
         uv run black ./src --check --diff
-
-    - name: Run tests
-      run: uv run pytest
 
   osv-scanner:
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.2.1

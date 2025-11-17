@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   metrics-anomaly-detection:
   - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-11-17T09:08:13.965605147Z"
+    description: Sample application Metrics Anomaly Detection
+    digest: ad566d7129d0811eeec10dcd17f0cbb1280c0e10d4005a27cf7b3d757cfb0777
+    name: metrics-anomaly-detection
+    type: application
+    urls:
+    - https://HIRO-MicroDataCenters-BV.github.io/metrics-anomaly-detection/helm-charts/metrics-anomaly-detection-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     appVersion: 0.1.0-dev.0.EDGE-339-validat.3e4608ae
     created: "2025-11-17T09:03:27.281713565Z"
     description: Sample application Metrics Anomaly Detection
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://HIRO-MicroDataCenters-BV.github.io/metrics-anomaly-detection/helm-charts/metrics-anomaly-detection-0.1.0-dev.0.EDGE-339-validat.3e4608ae.tgz
     version: 0.1.0-dev.0.EDGE-339-validat.3e4608ae
-generated: "2025-11-17T09:03:27.281116575Z"
+generated: "2025-11-17T09:08:13.96494924Z"
